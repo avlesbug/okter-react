@@ -2,19 +2,192 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  name         String
+  username     String    @unique
+  profileImage String?
 
-    @@index([name])
+  goals                  Goal[]
+  personalRecords        PersonalRecord[]
+  workoutPlans           WorkoutPlan[]
+  workouts               Workout[]
+  friendList             Friend[]          @relation("userFriends") // confirmed friends
+  sentFriendRequests     FriendRequest[]   @relation("sentRequests") // requests this user sent
+  receivedFriendRequests FriendRequest[]   @relation("receivedRequests") // requests this user received
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Friend    Friend[]
+}
+
+model Goal {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+
+  title      String
+  type       GoalType
+  target     Int        // Number of workouts, distance (km), or duration (minutes)
+  unit       GoalUnit     // "workouts" | "km" | "minutes" (or similar)
+  startDate  DateTime
+  endDate    DateTime
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model PersonalRecord {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  ovelse String
+  vekt   Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Workout {
+  id          String       @id @default(uuid())
+  userId      String
+  user        User         @relation(fields: [userId], references: [id])
+  date        DateTime
+  workoutPlan WorkoutPlan?
+  legacyWorkoutPlan String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WorkoutPlan {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  workout   Workout @relation(fields: [workoutId], references: [id])
+  workoutId String  @unique // relation scalar field (used in the `@relation` attribute above)
+
+  cardio   CardioWorkout?
+  strength StrengthWorkout?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CardioWorkout {
+  id              String           @id @default(uuid())
+  workoutId       String
+  type            String // "distance" | "interval"
+  distanceWorkout DistanceWorkout?
+  intervalWorkout IntervalWorkout?
+
+  workoutPlan   WorkoutPlan @relation(fields: [workoutPlanId], references: [id])
+  workoutPlanId String      @unique // relation scalar field (used in the `@relation` attribute above)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DistanceWorkout {
+  id String @id @default(uuid())
+
+  cardioWorkout   CardioWorkout @relation(fields: [cardioWorkoutId], references: [id])
+  cardioWorkoutId String        @unique
+
+  distanceKm      Float
+  durationSeconds Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model IntervalWorkout {
+  id              String        @id @default(uuid())
+  cardioWorkout   CardioWorkout @relation(fields: [cardioWorkoutId], references: [id])
+  cardioWorkoutId String        @unique
+
+  intervals IntervalSegment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model IntervalSegment {
+  id                String          @id @default(uuid())
+  intervalWorkoutId String
+  intervalWorkout   IntervalWorkout @relation(fields: [intervalWorkoutId], references: [id])
+
+  distanceKm      Float
+  durationSeconds Int
+  restSeconds     Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StrengthWorkout {
+  id        String             @id @default(uuid())
+  exercises StrengthExercise[]
+
+  workoutPlan   WorkoutPlan @relation(fields: [workoutPlanId], references: [id])
+  workoutPlanId String      @unique // relation scalar field (used in the `@relation` attribute above)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StrengthExercise {
+  id                String          @id @default(uuid())
+  strengthWorkout   StrengthWorkout @relation(fields: [strengthWorkoutId], references: [id])
+  strengthWorkoutId String          @unique
+
+  name   String
+  sets   Int
+  reps   Int
+  weight Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FriendRequest {
+  id          String   @id @default(uuid())
+  requesterId String
+  requester   User     @relation("sentRequests", fields: [requesterId], references: [id])
+  userId      String
+  user        User     @relation("receivedRequests", fields: [userId], references: [id])
+  status      String   @default("pending") // "pending", "accepted", "rejected"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Friend {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation("userFriends", fields: [userId], references: [id])
+  friendId  String
+  friend    User     @relation(fields: [friendId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+enum GoalType {
+  WORKOUT_COUNT
+  DISTANCE
+  TIME
+}
+
+enum GoalUnit {
+  WORKOUTS
+  KM
+  MINUTES
 }
