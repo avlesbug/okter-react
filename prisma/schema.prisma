@@ -12,10 +12,10 @@ datasource db {
 
 model User {
   id           String    @id @default(uuid())
+  clerkId      String    @unique
   email        String    @unique
   name         String
   username     String    @unique
-  profileImage String?
 
   goals                  Goal[]
   personalRecords        PersonalRecord[]
@@ -189,5 +189,9 @@ enum GoalType {
 enum GoalUnit {
   WORKOUTS
   KM
+  METERS
+  MILES
+  HOURS
   MINUTES
+  DAYS
 }

@@ -14,6 +14,7 @@ export type UserSummary = {
 };
 
 export type NewGoalDTO = {
+  userId: Goal["userId"];
   title: Goal["title"];
   type: Goal["type"];
   target: Goal["target"];
@@ -21,3 +22,7 @@ export type NewGoalDTO = {
   startDate: Goal["startDate"];
   endDate: Goal["endDate"];
 }
+
+export const DistanceUnits = ["km"];
+
+export const TimeUnits = ["minutes", "hours", "days"];

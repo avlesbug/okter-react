@@ -4,6 +4,7 @@ import { createGoal } from "~/lib/queries/goal"; // You’ll create this file
 import { z } from "zod";
 
 const CreateGoalSchema = z.object({
+  title: z.string(),
   userId: z.string(),
   type: z.enum(["WORKOUT_COUNT", "DISTANCE", "TIME"]),
   target: z.number().int().positive(),

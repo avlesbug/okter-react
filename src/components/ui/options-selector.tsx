@@ -1,7 +1,8 @@
 import { Badge } from "~/components/ui/badge";
+import { prettyString } from "~/lib/utils";
 
 interface Props {
-  options: [string,string][];
+  options: string[];
   onSelect: (option: string) => void;
   className?: string;
   selected?: string;
@@ -13,7 +14,7 @@ export const OptionsSelector = ({
   className,
   selected,
 }: Props) => {
-  const onClick = (option: string, index: number) => {
+  const onClick = (option: string) => {
     onSelect(option);
   };
 
@@ -22,11 +23,11 @@ export const OptionsSelector = ({
       {options.map((option, index) => (
         <Badge
           className="px-4 py-2 text-sm"
-          variant={option[1] !== selected ? "outline" : "default"}
-          key={option[1] + index}
-          onClick={() => onClick(option[1], index)}
+          variant={option !== selected ? "outline" : "default"}
+          key={option + index}
+          onClick={() => onClick(option)}
         >
-          {option[0]}
+          {prettyString(option)}
         </Badge>
       ))}
     </div>

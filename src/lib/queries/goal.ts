@@ -3,6 +3,7 @@ import { db } from "../prisma";
 
 
 export type CreateGoalInput = {
+  title: string;
   userId: string;
   type: GoalType;
   target: number;
@@ -20,6 +21,7 @@ export async function getGoalsByUserId(userId: string) {
 export async function createGoal(input: CreateGoalInput) {
   const goal = await db.goal.create({
     data: {
+      title: input.title,
       userId: input.userId,
       type: input.type,
       target: input.target,

@@ -33,7 +33,7 @@ export default function Home() {
     console.log(user)
   }, [user]);
 
-
+  //
   // const userQuery = api.user.getUser.useQuery({
   //   userId: "PjN5WvnNM6ZAoJ6xD4sVwCkARiC2",
   // });
@@ -63,9 +63,9 @@ export default function Home() {
   // }, [user]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[#141213] text-white">
+    <div className="flex min-h-screen flex-col items-center justify-center">
       {loading && <ScaleLoader color={"white"}/>}
       {user && <GoalCarousel goals={user.goals}/>}
-    </main>
+    </div>
   );
 }
