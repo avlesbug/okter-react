@@ -81,7 +81,7 @@ export const NewGoalDialog = () => {
       <DialogTrigger asChild>
         <Button variant="default">New goal</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-[#141213]  border-0">
         <DialogHeader>
           <DialogTitle>New Goal</DialogTitle>
         </DialogHeader>

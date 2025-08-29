@@ -5,6 +5,8 @@ import { NextResponse } from "next/server";
 import { db } from "~/server/db";
 
 export async function POST(req: Request) {
+  console.log("Webhook received");
+  console.log(process.env.CLERK_WEBHOOK_SECRET)
   const body = await req.text();
   const heads = headers();
 

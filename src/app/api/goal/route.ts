@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getUserById } from "~/lib/queries/user";
+import { getUserByClerkId } from "~/lib/queries/user";
 import { createGoal } from "~/lib/queries/goal"; // You’ll create this file
 import { z } from "zod";
 
@@ -19,7 +19,7 @@ export async function GET(req: Request) {
 
   if (!userId) return NextResponse.json({ error: "Missing userId" }, { status: 400 });
 
-  const user = await getUserById(userId);
+  const user = await getUserByClerkId(userId);
   return NextResponse.json(user);
 }
 

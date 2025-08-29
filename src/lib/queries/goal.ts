@@ -1,4 +1,4 @@
-import type { GoalType, GoalUnit } from "@prisma/client";
+import { type Goal, type GoalType, type GoalUnit } from "@prisma/client";
 import { db } from "../prisma";
 
 
@@ -12,8 +12,8 @@ export type CreateGoalInput = {
   endDate: Date;
 };
 
-export async function getGoalsByUserId(userId: string) {
-  return await db.goal.findUnique({
+export async function getGoalsByUserId(userId: string) : Promise<Goal[]> {
+  return await db.goal.findMany({
     where: { id: userId },
   });
 }
@@ -30,6 +30,5 @@ export async function createGoal(input: CreateGoalInput) {
       endDate: input.endDate,
     },
   });
-
   return goal;
 }

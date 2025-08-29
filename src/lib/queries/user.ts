@@ -3,9 +3,9 @@ import { db } from "../prisma";
 import type { UserSummary } from "~/lib/types";
 import { startOfYear, endOfYear } from "date-fns";
 
-export async function getUserById(userId: string) {
+export async function getUserByClerkId(clerkId: string) {
   return await db.user.findUnique({
-    where: { id: userId },
+    where: { clerkId: clerkId },
     include: {
       goals: true
     },

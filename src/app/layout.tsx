@@ -3,9 +3,15 @@ import "~/styles/globals.css";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "~/components/ui/theme-provider";
-import { ClerkProvider, SignedIn, SignedOut, SignIn, UserButton } from "@clerk/nextjs";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignIn,
+  UserButton,
+} from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
-
+import { UserProvider } from "~/context/UserContext";
 
 export const metadata: Metadata = {
   title: "Økter",
@@ -22,21 +28,23 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ClerkProvider appearance={{ theme: dark}}>
+    <ClerkProvider appearance={{ theme: dark }}>
       <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
-        <body className={'bg-[#141213] text-white'}>
-        <header className="flex items-center justify-between px-4 py-3 md:px-6 md:py-4">
-          <h1 className={'text-lg'}>Økter</h1>
-          <UserButton />
-        </header>
+        <body className={"bg-[#141213] text-white"}>
+          <header className="flex items-center justify-between px-4 py-3 md:px-6 md:py-4">
+            <h1 className={"text-lg"}>Økter</h1>
+            <UserButton />
+          </header>
           <main>
-            <ThemeProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
               <SignedOut>
                 <div className="flex min-h-screen items-center justify-center">
                   <SignIn routing="hash" />
                 </div>
               </SignedOut>
-              <SignedIn>{children}</SignedIn>
+              <SignedIn>
+                <UserProvider>{children}</UserProvider>
+              </SignedIn>
             </ThemeProvider>
           </main>
         </body>
